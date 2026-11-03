@@ -11,13 +11,25 @@ document.addEventListener("DOMContentLoaded", () => {
     a.addEventListener("click", () => navLinks.classList.remove("open"))
   );
 
+  /* ---------- Block click dispatcher ----------
+     Khối nào đã có mặt bằng tầng (FLOOR_PLANS) thì bấm vào đi thẳng tới
+     trang mặt bằng tầng; khối chưa có dữ liệu thì mở modal thông tin
+     chung như trước. */
+  function handleBlockClick(id) {
+    if (FLOOR_PLANS[id]) {
+      location.hash = "/floorplan/" + id;
+    } else {
+      openBlockModal(id);
+    }
+  }
+
   /* ---------- Legend tags (clickable block names above the site plan image) ---------- */
   const legendTags = document.getElementById("legendTags");
   BLOCKS.forEach(b => {
     const el = document.createElement("div");
     el.className = "tag";
     el.innerHTML = `<i style="background:${b.color}"></i>${b.name}`;
-    el.addEventListener("click", () => openBlockModal(b.id));
+    el.addEventListener("click", () => handleBlockClick(b.id));
     el.style.cursor = "pointer";
     legendTags.appendChild(el);
   });
@@ -32,9 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="dot"></div>
       <h4>${b.name}</h4>
       <p>${b.desc}</p>
-      <div class="go">Xem chi tiết &rarr;</div>
+      <div class="go">${FLOOR_PLANS[b.id] ? "Xem mặt bằng tầng" : "Xem chi tiết"} &rarr;</div>
     `;
-    card.addEventListener("click", () => openBlockModal(b.id));
+    card.addEventListener("click", () => handleBlockClick(b.id));
     blocksGrid.appendChild(card);
   });
 
@@ -49,13 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalHandover = document.getElementById("modalHandover");
   const modalNearby = document.getElementById("modalNearby");
   const modalBar = document.getElementById("modalBar");
-  const modalFloorplanBtn = document.getElementById("modalFloorplanBtn");
-  let currentModalBlockId = null;
 
   function openBlockModal(id) {
     const b = BLOCKS.find(x => x.id === id);
     if (!b) return;
-    currentModalBlockId = id;
     modalBar.style.setProperty("--c", b.color);
     modalTag.style.color = b.color;
     modalTag.textContent = b.tag;
@@ -74,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
       pill.textContent = `${String(a.id).padStart(2, "0")} · ${a.name}`;
       modalNearby.appendChild(pill);
     });
-    modalFloorplanBtn.style.display = FLOOR_PLANS[id] ? "" : "none";
     overlay.classList.add("open");
     document.body.style.overflow = "hidden";
   }
@@ -84,12 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   document.getElementById("modalClose").addEventListener("click", closeModal);
   document.getElementById("modalContactBtn").addEventListener("click", closeModal);
-  modalFloorplanBtn.addEventListener("click", e => {
-    e.preventDefault();
-    if (!currentModalBlockId) return;
-    closeModal();
-    location.hash = "/floorplan/" + currentModalBlockId;
-  });
   overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
