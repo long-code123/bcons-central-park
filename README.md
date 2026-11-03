@@ -2,18 +2,43 @@
 
 Website tĩnh (HTML/CSS/JS thuần, không cần build) demo mặt bằng 2D dự án
 Bcons Central Park: khách bấm vào từng khối căn hộ (Tamarind, Palm, Lotus,
-Bamboo, Orchid) để xem chi tiết, kèm danh mục 60 tiện ích nội khu có thể
-tìm kiếm / lọc theo nhóm.
+Bamboo, Orchid) để xem chi tiết, từ đó xem tiếp **mặt bằng tầng điển hình**
+(bấm từng căn để xem diện tích/giá, chuyển qua lại giữa các tầng), và có
+một trang **Bảng giá** liệt kê toàn bộ căn hộ của mọi tầng/mọi khối, lọc
+và tìm kiếm được. Kèm danh mục 60 tiện ích nội khu có thể tìm kiếm/lọc.
 
 ## Cấu trúc
 
 ```
-index.html        trang chính
-css/style.css      giao diện
-js/data.js         dữ liệu khối căn hộ + 60 tiện ích — SỬA Ở ĐÂY
-js/script.js       logic tương tác (bản đồ, modal, tìm kiếm...)
-assets/siteplan.jpg ảnh mặt bằng tổng thể (đã nén cho web)
+index.html                          trang chính (gồm cả 2 trang con: mặt bằng tầng, bảng giá)
+css/style.css                       giao diện
+js/data.js                          dữ liệu khối, tiện ích, mặt bằng tầng, giá — SỬA Ở ĐÂY
+js/script.js                        logic tương tác (bản đồ, modal, routing, bảng giá...)
+assets/siteplan.jpg                 ảnh mặt bằng tổng thể (đã nén cho web)
+assets/floorplans/orchid-typical.jpg ảnh mặt bằng tầng điển hình khối Orchid
 ```
+
+## Mặt bằng tầng & Bảng giá — cách hoạt động
+
+- Trong `js/data.js`, object `FLOOR_PLANS` khai báo mặt bằng tầng điển hình
+  theo từng khối. Hiện chỉ `orchid` có dữ liệu thật (27 căn, đúng TT/LL
+  từ bản vẽ bạn gửi). Khi có bản vẽ mặt bằng tầng của Tamarind/Palm/
+  Lotus/Bamboo, thêm vào `FLOOR_PLANS` theo đúng cấu trúc của `orchid`
+  (copy ảnh vào `assets/floorplans/`, liệt kê từng căn với `num/code/tt/ll/x/y`).
+- `FLOOR_PLANS.orchid.floors` đang là placeholder (tầng 2–20, 19 tầng) —
+  **sửa lại đúng số tầng thực tế** của block Orchid.
+- Vị trí số căn trên ảnh (`x`, `y`, tính theo %) là ước lượng bằng mắt.
+  Vào trang mặt bằng tầng, bấm nút **"🎯 Chế độ hiệu chỉnh toạ độ"**, bấm
+  lần lượt từng số căn trên ảnh theo đúng thứ tự khai báo trong
+  `data.js` để lấy toạ độ % chính xác, rồi dán lại vào từng unit.
+- Giá: `PRICE_CONFIG` trong `data.js` đang để `null` toàn bộ → site hiển
+  thị **"Liên hệ"** thay vì bịa số. Khi có bảng giá/m² chính thức, điền
+  vào `PRICE_CONFIG.perBlock` (theo khối) hoặc `PRICE_CONFIG.perUnitCode`
+  (theo loại căn, ví dụ `{ B5: 34000000 }`) — site sẽ tự tính thành tiền
+  = đơn giá × TT cho từng căn, ở cả trang mặt bằng tầng và trang Bảng giá.
+- Trang Bảng giá (`#/price-list`, vào từ menu "Bảng giá") tự sinh danh
+  sách = mọi khối có trong `FLOOR_PLANS` × mọi tầng × mọi căn — không
+  cần nhập tay từng dòng.
 
 ## Trước khi gửi khách: việc cần làm
 
@@ -29,6 +54,8 @@ assets/siteplan.jpg ảnh mặt bằng tổng thể (đã nén cho web)
 4. (Tuỳ chọn) Thay `assets/siteplan.jpg` bằng ảnh phối cảnh/flycam thật
    nếu có, giữ nguyên tên file hoặc cập nhật lại đường dẫn trong
    `index.html`.
+5. Xem mục "Mặt bằng tầng & Bảng giá" bên dưới để cập nhật số tầng thật,
+   hiệu chỉnh toạ độ từng căn, và điền giá khi có bảng giá chính thức.
 
 ## Chạy thử ở máy local
 
