@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bcons Central Park | Mặt bằng tương tác</title>
+<meta name="description" content="Website demo tương tác dự án Bcons Central Park — khám phá mặt bằng tổng thể, các khối căn hộ Tamarind, Palm, Lotus, Bamboo, Orchid và 60 tiện ích nội khu." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23ea1f2c%22/><text x=%2250%22 y=%2266%22 font-size=%2258%22 font-family=%22Arial%22 font-weight=%22900%22 fill=%22white%22 text-anchor=%22middle%22>B</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <div class="mark">B</div>
+      <div>
+        BCONS CENTRAL PARK
+        <small>KHU CĂN HỘ PHAN TRUNG</small>
+      </div>
+    </div>
+    <nav class="nav-links" id="navLinks">
+      <a href="#gioi-thieu">Giới thiệu</a>
+      <a href="#mat-bang">Mặt bằng</a>
+      <a href="#khoi-can-ho">Khối căn hộ</a>
+      <a href="#tien-ich">Tiện ích</a>
+      <a href="#lien-he">Liên hệ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#lien-he" class="btn btn-ghost btn-sm">Liên hệ tư vấn</a>
+      <button class="burger" id="burger">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="gioi-thieu">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Demo mặt bằng tương tác</div>
+      <h1>BCONS <span>CENTRAL PARK</span><br>Sống giữa công viên, giữa lòng đô thị</h1>
+      <p class="lead">Khám phá mặt bằng tổng thể 2D — bấm vào từng khối căn hộ Tamarind, Palm, Lotus, Bamboo, Orchid để xem thông tin chi tiết, cùng hệ thống 60 tiện ích nội khu trải dài toàn dự án.</p>
+      <div class="hero-actions">
+        <a href="#mat-bang" class="btn btn-primary">Khám phá mặt bằng ↓</a>
+        <a href="#tien-ich" class="btn btn-ghost">Xem 60 tiện ích</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><b>5</b><span>Khối căn hộ</span></div>
+        <div class="stat"><b>60</b><span>Tiện ích nội khu</span></div>
+        <div class="stat"><b>2</b><span>Mặt tiền đường</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="assets/siteplan.jpg" alt="Phối cảnh mặt bằng Bcons Central Park" />
+      <div class="glow"></div>
+      <div class="badge"><span class="dot"></span>Mặt bằng tổng thể dự án</div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>Cuộn xuống</span><span class="line"></span></div>
+</section>
+
+<!-- ===================== INTERACTIVE SITE PLAN ===================== -->
+<section class="map-section" id="mat-bang">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Mặt bằng tổng thể</div>
+      <h2 class="section-title">Bấm vào từng khối để xem chi tiết</h2>
+      <p class="section-sub">Di chuột để xem tên khối, bấm để mở thông tin chi tiết — số tầng, loại căn hộ và các tiện ích lân cận.</p>
+    </div>
+
+    <div class="map-toolbar">
+      <div class="map-legend-tags" id="legendTags"></div>
+    </div>
+
+    <div class="map-layout">
+      <div class="map-canvas" id="mapCanvas">
+        <div class="map-hint">👆 Di chuột / bấm vào khối trên bản đồ</div>
+        <img src="assets/siteplan.jpg" alt="Mặt bằng tổng thể Bcons Central Park" draggable="false" />
+        <svg id="mapSvg" viewBox="0 0 2000 1125" preserveAspectRatio="none"></svg>
+        <div id="mapLabels"></div>
+        <button class="btn btn-ghost map-calib-btn" id="calibBtn">🎯 Chế độ hiệu chỉnh toạ độ</button>
+        <div id="calibOutput"></div>
+      </div>
+
+      <div class="amenity-panel">
+        <h3>Danh mục tiện ích</h3>
+        <div class="count" id="amenityCount"></div>
+        <div class="amenity-search">
+          🔍 <input type="text" id="amenitySearch" placeholder="Tìm tiện ích... (vd: hồ bơi, cây xanh)" />
+        </div>
+        <div class="amenity-filters">
+          <div class="chip active" data-cat="all">Tất cả</div>
+          <div class="chip" data-cat="canh-quan">🌿 Cảnh quan</div>
+          <div class="chip" data-cat="giai-tri">☕ Giải trí</div>
+          <div class="chip" data-cat="the-thao">🏊 Thể thao</div>
+          <div class="chip" data-cat="tien-ich">⚡ Kỹ thuật</div>
+        </div>
+        <div class="amenity-list" id="amenityList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BLOCKS GRID ===================== -->
+<section id="khoi-can-ho">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">5 khối căn hộ</div>
+      <h2 class="section-title">Tamarind · Palm · Lotus · Bamboo · Orchid</h2>
+      <p class="section-sub">Mỗi khối sở hữu vị trí và tầm nhìn riêng trong quần thể công viên nội khu. Bấm vào thẻ bất kỳ để xem chi tiết.</p>
+    </div>
+    <div class="blocks-grid" id="blocksGrid"></div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section id="lien-he">
+  <div class="wrap contact-wrap">
+    <div>
+      <div class="eyebrow">Liên hệ</div>
+      <h2 class="section-title" style="margin-bottom:18px">Đăng ký nhận bảng giá &amp; tư vấn</h2>
+      <p style="margin-bottom:28px">Để lại thông tin, đội ngũ tư vấn sẽ liên hệ hỗ trợ bạn chọn căn hộ phù hợp trong thời gian sớm nhất.</p>
+      <div class="contact-card">
+        <div class="info-row">
+          <div class="ic">📍</div>
+          <div><b>Vị trí dự án</b><span>Đường Phan Trung — Hẻm 238 Phan Trung, giao Đường Dương Tử Giang</span></div>
+        </div>
+        <div class="info-row">
+          <div class="ic">📞</div>
+          <div><b>Hotline tư vấn</b><span>Cập nhật số hotline tại đây</span></div>
+        </div>
+        <div class="info-row">
+          <div class="ic">✉️</div>
+          <div><b>Email</b><span>Cập nhật email liên hệ tại đây</span></div>
+        </div>
+      </div>
+    </div>
+    <form class="contact-card" id="contactForm">
+      <div class="field"><label>Họ và tên</label><input type="text" required placeholder="Nguyễn Văn A" /></div>
+      <div class="field"><label>Số điện thoại</label><input type="tel" required placeholder="09xx xxx xxx" /></div>
+      <div class="field"><label>Email</label><input type="email" placeholder="email@vidu.com" /></div>
+      <div class="field"><label>Lời nhắn</label><textarea placeholder="Tôi quan tâm đến khối Lotus, 2 phòng ngủ..."></textarea></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Gửi yêu cầu tư vấn</button>
+      <p style="font-size:11.5px;margin-top:12px;text-align:center">* Form demo — chưa kết nối hệ thống nhận dữ liệu thật.</p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <span>© <span id="year"></span> Bcons Central Park — Website demo tương tác, dùng cho mục đích giới thiệu dự án.</span>
+    <span>Thiết kế &amp; phát triển demo bởi đội ngũ tư vấn</span>
+  </div>
+</footer>
+
+<!-- ===================== BLOCK DETAIL MODAL ===================== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head" id="modalBar">
+      <div class="barcolor"></div>
+      <div>
+        <div class="tag" id="modalTag"></div>
+        <h2 id="modalTitle"></h2>
+      </div>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="desc" id="modalDesc"></p>
+      <div class="note">⚠️ Số liệu số tầng / số căn / loại hình dưới đây là placeholder demo — cập nhật số liệu thật trong file <code>js/data.js</code> trước khi gửi khách hàng.</div>
+      <div class="modal-stats">
+        <div class="box"><span>Số tầng</span><b id="modalFloors"></b></div>
+        <div class="box"><span>Tổng số căn</span><b id="modalUnits"></b></div>
+        <div class="box"><span>Loại hình</span><b id="modalTypes"></b></div>
+        <div class="box"><span>Bàn giao</span><b id="modalHandover"></b></div>
+      </div>
+      <h4 class="sub">Tiện ích lân cận</h4>
+      <div class="modal-nearby" id="modalNearby"></div>
+      <div class="modal-cta">
+        <a href="#lien-he" class="btn btn-primary" id="modalContactBtn">Đăng ký tư vấn khối này</a>
+        <button class="btn btn-ghost" id="modalClose2" onclick="document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
