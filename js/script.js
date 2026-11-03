@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fpBlockSub.textContent = fp.title + " — Tầng " + floor;
     fpNote.innerHTML = hasLivePricing(blockId)
-      ? "Giá tham khảo theo bảng giá CĐT (file Rổ hàng/Check giá), chưa phải cam kết cuối cùng — số tiền cuối cùng theo hợp đồng và thông báo chính thức của CĐT. Vị trí số căn trên ảnh là ước lượng, dùng nút hiệu chỉnh bên dưới nếu cần chỉnh lại."
+      ? "Giá tham khảo theo bảng giá CĐT (file Rổ hàng/Check giá), chưa phải cam kết cuối cùng — số tiền cuối cùng theo hợp đồng và thông báo chính thức của CĐT."
       : "⚠️ Danh sách tầng và vị trí số căn trên ảnh là dữ liệu demo (ước lượng) — dùng nút hiệu chỉnh bên dưới để chỉnh lại chính xác trước khi dùng thật.";
 
     fpImage.src = fp.image;

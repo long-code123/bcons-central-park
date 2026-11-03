@@ -149,9 +149,12 @@ const AMENITIES = [
      (dùng khi không tra được dữ liệu theo tầng). Với Orchid, script.js
      ưu tiên lấy TT/LL theo đúng tầng từ orchid-prices.js vì diện tích
      thông thuỷ (LL) có thể chênh lệch nhẹ giữa các cụm tầng.
-   - units[].x / y: vị trí tâm số thứ tự căn trên ảnh, tính theo %
-     (0–100) so với chiều rộng/cao ảnh. Dùng nút "Chế độ hiệu chỉnh"
-     trong trang mặt bằng tầng để bấm lấy toạ độ chính xác rồi dán lại.
+   - units[].x / y: vị trí tâm badge số căn trên ảnh, tính theo %
+     (0–100) so với chiều rộng/cao ảnh gốc 1754×1240. Với Orchid, các
+     toạ độ này được dò bằng phân tích màu pixel (phát hiện tâm 27
+     badge đỏ cam trên ảnh gốc), không phải ước lượng bằng mắt — nên
+     khá chính xác. Nếu đổi sang ảnh mặt bằng khác, dùng nút "Chế độ
+     hiệu chỉnh" trong trang mặt bằng tầng để lấy lại toạ độ.
 ================================================================ */
 
 const FLOOR_PLANS = {
@@ -160,33 +163,33 @@ const FLOOR_PLANS = {
     image: "assets/floorplans/orchid-typical.jpg",
     floors: Array.from({ length: 20 }, (_, i) => i + 3), // tầng 3–22, lấy từ dữ liệu giá thật (js/orchid-prices.js)
     units: [
-      { num: 22, code: "B5", tt: 69.81, ll: 62.98, x: 10.1, y: 21.3 },
-      { num: 23, code: "D3", tt: 37.60, ll: 33.85, x: 16.4, y: 21.3 },
-      { num: 24, code: "D3", tt: 37.60, ll: 33.85, x: 22.7, y: 21.3 },
-      { num: 25, code: "D3", tt: 37.60, ll: 33.85, x: 29.0, y: 21.3 },
-      { num: 26, code: "D1", tt: 39.58, ll: 35.77, x: 35.3, y: 21.3 },
-      { num: 27, code: "D1", tt: 39.53, ll: 35.72, x: 40.9, y: 21.3 },
-      { num: 1,  code: "D5", tt: 53.48, ll: 49.40, x: 48.1, y: 21.3 },
-      { num: 2,  code: "D1", tt: 39.58, ll: 35.90, x: 54.4, y: 21.3 },
-      { num: 3,  code: "B1", tt: 66.36, ll: 60.73, x: 60.7, y: 21.3 },
-      { num: 4,  code: "B1", tt: 65.92, ll: 60.51, x: 67.0, y: 21.3 },
-      { num: 5,  code: "B4", tt: 73.24, ll: 67.26, x: 78.3, y: 21.3 },
-      { num: 6,  code: "B1", tt: 66.36, ll: 60.73, x: 84.6, y: 21.3 },
-      { num: 7,  code: "A2", tt: 87.14, ll: 79.84, x: 91.4, y: 21.3 },
-      { num: 21, code: "B8", tt: 64.89, ll: 58.49, x: 10.1, y: 63.5 },
-      { num: 20, code: "C4", tt: 62.02, ll: 56.75, x: 16.4, y: 63.5 },
-      { num: 19, code: "D6", tt: 62.02, ll: 56.75, x: 22.7, y: 63.5 },
-      { num: 18, code: "C4", tt: 62.02, ll: 56.75, x: 29.0, y: 63.5 },
-      { num: 17, code: "D6", tt: 42.95, ll: 38.33, x: 35.3, y: 63.5 },
-      { num: 16, code: "D6", tt: 42.95, ll: 38.33, x: 40.9, y: 63.5 },
-      { num: 15, code: "C4", tt: 62.02, ll: 56.75, x: 46.5, y: 63.5 },
-      { num: 14, code: "C4", tt: 62.02, ll: 56.75, x: 53.0, y: 63.5 },
-      { num: 13, code: "D6", tt: 42.95, ll: 38.33, x: 59.3, y: 63.5 },
-      { num: 12, code: "D6", tt: 42.95, ll: 38.33, x: 64.9, y: 63.5 },
-      { num: 11, code: "C4", tt: 62.02, ll: 56.75, x: 70.6, y: 63.5 },
-      { num: 10, code: "D6", tt: 42.95, ll: 38.33, x: 76.9, y: 63.5 },
-      { num: 9,  code: "C4", tt: 62.02, ll: 56.75, x: 83.1, y: 63.5 },
-      { num: 8,  code: "B8", tt: 64.90, ll: 58.44, x: 89.8, y: 63.5 }
+      { num: 22, code: "B5", tt: 69.81, ll: 62.98, x: 9.4, y: 21.2 },
+      { num: 23, code: "D3", tt: 37.60, ll: 33.85, x: 14.3, y: 21.2 },
+      { num: 24, code: "D3", tt: 37.60, ll: 33.85, x: 19.3, y: 21.2 },
+      { num: 25, code: "D3", tt: 37.60, ll: 33.85, x: 24.2, y: 21.2 },
+      { num: 26, code: "D1", tt: 39.58, ll: 35.77, x: 29.3, y: 21.2 },
+      { num: 27, code: "D1", tt: 39.53, ll: 35.72, x: 34.4, y: 21.2 },
+      { num: 1,  code: "D5", tt: 53.48, ll: 49.40, x: 42.1, y: 21.2 },
+      { num: 2,  code: "D1", tt: 39.58, ll: 35.90, x: 47.1, y: 21.2 },
+      { num: 3,  code: "B1", tt: 66.36, ll: 60.73, x: 52.1, y: 21.2 },
+      { num: 4,  code: "B1", tt: 65.92, ll: 60.51, x: 58.7, y: 21.2 },
+      { num: 5,  code: "B4", tt: 73.24, ll: 67.26, x: 73.7, y: 21.2 },
+      { num: 6,  code: "B1", tt: 66.36, ll: 60.73, x: 81.5, y: 21.2 },
+      { num: 7,  code: "A2", tt: 87.14, ll: 79.84, x: 88.8, y: 21.2 },
+      { num: 21, code: "B8", tt: 64.89, ll: 58.49, x: 10.5, y: 63.2 },
+      { num: 20, code: "C4", tt: 62.02, ll: 56.75, x: 17.7, y: 63.2 },
+      { num: 19, code: "D6", tt: 62.02, ll: 56.75, x: 23.6, y: 63.2 },
+      { num: 18, code: "C4", tt: 62.02, ll: 56.75, x: 29.6, y: 63.2 },
+      { num: 17, code: "D6", tt: 42.95, ll: 38.33, x: 35.4, y: 63.2 },
+      { num: 16, code: "D6", tt: 42.95, ll: 38.33, x: 40.4, y: 63.2 },
+      { num: 15, code: "C4", tt: 62.02, ll: 56.75, x: 46.2, y: 63.2 },
+      { num: 14, code: "C4", tt: 62.02, ll: 56.75, x: 53.5, y: 63.2 },
+      { num: 13, code: "D6", tt: 42.95, ll: 38.33, x: 59.3, y: 63.2 },
+      { num: 12, code: "D6", tt: 42.95, ll: 38.33, x: 64.2, y: 63.2 },
+      { num: 11, code: "C4", tt: 62.02, ll: 56.75, x: 70.1, y: 63.2 },
+      { num: 10, code: "D6", tt: 42.95, ll: 38.33, x: 76.0, y: 63.2 },
+      { num: 9,  code: "C4", tt: 62.02, ll: 56.75, x: 82.0, y: 63.2 },
+      { num: 8,  code: "B8", tt: 64.90, ll: 58.44, x: 89.2, y: 63.2 }
     ]
   }
 };
