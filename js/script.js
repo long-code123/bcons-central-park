@@ -95,15 +95,29 @@ document.addEventListener("DOMContentLoaded", () => {
   overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
-  /* ---------- Contact form (demo only — no backend) ---------- */
+  /* ---------- Contact form (gửi qua Netlify Forms, báo email tự động) ---------- */
   const form = document.getElementById("contactForm");
   form.addEventListener("submit", e => {
     e.preventDefault();
     const btn = form.querySelector("button");
     const original = btn.textContent;
-    btn.textContent = "Đã gửi — cảm ơn bạn!";
     btn.disabled = true;
-    setTimeout(() => { btn.textContent = original; btn.disabled = false; form.reset(); }, 2600);
+    btn.textContent = "Đang gửi...";
+
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(new FormData(form)).toString()
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("submit failed");
+        btn.textContent = "Đã gửi — cảm ơn bạn!";
+        setTimeout(() => { btn.textContent = original; btn.disabled = false; form.reset(); }, 2600);
+      })
+      .catch(() => {
+        btn.textContent = "Có lỗi, thử lại sau";
+        setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 2600);
+      });
   });
 
   /* ---------- Footer year ---------- */
