@@ -138,6 +138,72 @@ const AMENITIES = [
   { id: 60, name: "Vườn hoa theo mùa", cat: "canh-quan" }
 ];
 
+/* ============================================================
+   MẶT BẰNG TẦNG ĐIỂN HÌNH — theo từng khối.
+   - Chỉ "orchid" có dữ liệu thật (từ bản vẽ mặt bằng tầng điển hình
+     bạn cung cấp). Các khối khác sẽ hiện "đang cập nhật" cho đến khi
+     bạn thêm dữ liệu theo đúng cấu trúc bên dưới.
+   - floors: danh sách tầng áp dụng mặt bằng này — ĐANG LÀ PLACEHOLDER
+     (tầng 2–20), sửa lại đúng số tầng thực tế của block Orchid.
+   - units[].x / y: vị trí tâm số thứ tự căn trên ảnh, tính theo %
+     (0–100) so với chiều rộng/cao ảnh. Dùng nút "Chế độ hiệu chỉnh"
+     trong trang mặt bằng tầng để bấm lấy toạ độ chính xác rồi dán lại.
+================================================================ */
+
+const FLOOR_PLANS = {
+  orchid: {
+    title: "Mặt bằng tầng điển hình",
+    image: "assets/floorplans/orchid-typical.jpg",
+    floors: Array.from({ length: 19 }, (_, i) => i + 2), // TODO: sửa đúng số tầng thực tế (hiện: tầng 2–20)
+    units: [
+      { num: 22, code: "B5", tt: 69.81, ll: 62.98, x: 10.1, y: 21.3 },
+      { num: 23, code: "D3", tt: 37.60, ll: 33.85, x: 16.4, y: 21.3 },
+      { num: 24, code: "D3", tt: 37.60, ll: 33.85, x: 22.7, y: 21.3 },
+      { num: 25, code: "D3", tt: 37.60, ll: 33.85, x: 29.0, y: 21.3 },
+      { num: 26, code: "D1", tt: 39.58, ll: 35.77, x: 35.3, y: 21.3 },
+      { num: 27, code: "D1", tt: 39.53, ll: 35.72, x: 40.9, y: 21.3 },
+      { num: 1,  code: "D5", tt: 53.48, ll: 49.40, x: 48.1, y: 21.3 },
+      { num: 2,  code: "D1", tt: 39.58, ll: 35.90, x: 54.4, y: 21.3 },
+      { num: 3,  code: "B1", tt: 66.36, ll: 60.73, x: 60.7, y: 21.3 },
+      { num: 4,  code: "B1", tt: 65.92, ll: 60.51, x: 67.0, y: 21.3 },
+      { num: 5,  code: "B4", tt: 73.24, ll: 67.26, x: 78.3, y: 21.3 },
+      { num: 6,  code: "B1", tt: 66.36, ll: 60.73, x: 84.6, y: 21.3 },
+      { num: 7,  code: "A2", tt: 87.14, ll: 79.84, x: 91.4, y: 21.3 },
+      { num: 21, code: "B8", tt: 64.89, ll: 58.49, x: 10.1, y: 63.5 },
+      { num: 20, code: "C4", tt: 62.02, ll: 56.75, x: 16.4, y: 63.5 },
+      { num: 19, code: "D6", tt: 62.02, ll: 56.75, x: 22.7, y: 63.5 },
+      { num: 18, code: "C4", tt: 62.02, ll: 56.75, x: 29.0, y: 63.5 },
+      { num: 17, code: "D6", tt: 42.95, ll: 38.33, x: 35.3, y: 63.5 },
+      { num: 16, code: "D6", tt: 42.95, ll: 38.33, x: 40.9, y: 63.5 },
+      { num: 15, code: "C4", tt: 62.02, ll: 56.75, x: 46.5, y: 63.5 },
+      { num: 14, code: "C4", tt: 62.02, ll: 56.75, x: 53.0, y: 63.5 },
+      { num: 13, code: "D6", tt: 42.95, ll: 38.33, x: 59.3, y: 63.5 },
+      { num: 12, code: "D6", tt: 42.95, ll: 38.33, x: 64.9, y: 63.5 },
+      { num: 11, code: "C4", tt: 62.02, ll: 56.75, x: 70.6, y: 63.5 },
+      { num: 10, code: "D6", tt: 42.95, ll: 38.33, x: 76.9, y: 63.5 },
+      { num: 9,  code: "C4", tt: 62.02, ll: 56.75, x: 83.1, y: 63.5 },
+      { num: 8,  code: "B8", tt: 64.90, ll: 58.44, x: 89.8, y: 63.5 }
+    ]
+  }
+};
+
+/* Đơn giá / m² — để trống (null) sẽ hiển thị "Liên hệ" thay vì bịa giá.
+   Khi có bảng giá thật, điền VNĐ/m² theo khối hoặc theo loại căn. */
+const PRICE_CONFIG = {
+  perBlock: { orchid: null, tamarind: null, palm: null, lotus: null, bamboo: null },
+  perUnitCode: {} // vd: { B5: 34000000, D3: 31000000 }
+};
+
+function getUnitPricePerM2(blockId, code) {
+  if (PRICE_CONFIG.perUnitCode[code] != null) return PRICE_CONFIG.perUnitCode[code];
+  if (PRICE_CONFIG.perBlock[blockId] != null) return PRICE_CONFIG.perBlock[blockId];
+  return null;
+}
+
+function formatVND(n) {
+  return n.toLocaleString("vi-VN") + " đ";
+}
+
 const CATEGORIES = {
   "canh-quan": { label: "Cảnh quan & Nghệ thuật", icon: "🌿" },
   "giai-tri": { label: "Giải trí & Thư giãn", icon: "☕" },

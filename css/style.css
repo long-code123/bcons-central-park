@@ -272,6 +272,95 @@ footer{border-top:1px solid var(--border);padding:34px 0;background:var(--bg-alt
 .footer-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
 .footer-row span{font-size:12.5px;color:var(--text-dim)}
 
+/* ===================== Page views (floor plan / price list) ===================== */
+#mainView{display:block}
+.page-view{display:none;min-height:100vh;background:var(--bg)}
+.page-view.active{display:block}
+body.on-subpage #mainView{display:none}
+
+.page-topbar{
+  position:sticky;top:0;z-index:50;background:rgba(10,12,17,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);padding:16px 0;
+}
+.page-topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.page-topbar-title{display:flex;flex-direction:column;text-align:center}
+.page-topbar-title span{font-size:17px;font-weight:800}
+.page-topbar-title small{font-size:12px;color:var(--text-dim)}
+
+/* Floor switcher */
+.fp-floor-switcher-wrap{overflow-x:auto;margin-bottom:22px;padding-bottom:6px}
+.fp-floor-switcher{display:flex;gap:8px;min-width:max-content}
+.fp-floor-switcher .floor-pill{
+  flex:none;min-width:52px;text-align:center;padding:10px 14px;border-radius:10px;
+  background:var(--card);border:1px solid var(--border);font-size:13px;font-weight:700;
+  cursor:pointer;color:var(--text-dim);transition:.15s;
+}
+.fp-floor-switcher .floor-pill:hover{background:var(--card-hover);color:#fff}
+.fp-floor-switcher .floor-pill.active{background:var(--red);border-color:var(--red);color:#fff}
+
+/* Floor plan layout */
+.fp-layout{display:grid;grid-template-columns:2.1fr 1fr;gap:24px;align-items:start}
+#fpCanvas{position:relative}
+#fpHotspots{position:absolute;inset:0;pointer-events:none}
+.unit-dot{
+  position:absolute;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;
+  background:rgba(10,12,17,.85);border:2px solid #fff;color:#fff;font-size:12px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;
+  pointer-events:auto;
+}
+.unit-dot:hover{background:var(--red);border-color:var(--red);transform:translate(-50%,-50%) scale(1.15)}
+.unit-dot.active{background:var(--red);border-color:#fff;box-shadow:0 0 0 5px rgba(234,31,44,.3)}
+#fpCanvas.calib-mode .unit-dot{pointer-events:none}
+
+.unit-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;min-height:360px}
+.unit-panel-empty{color:var(--text-dim);font-size:13.5px;line-height:1.7;padding-top:30px;text-align:center}
+.unit-code{font-size:24px;font-weight:800;margin-bottom:4px}
+.unit-sub{font-size:13px;color:var(--text-dim);margin-bottom:20px}
+.unit-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.unit-stats .box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px}
+.unit-stats .box span{display:block;font-size:11px;color:var(--text-dim);margin-bottom:6px}
+.unit-stats .box b{font-size:17px}
+.unit-price-box{
+  background:linear-gradient(135deg,rgba(234,31,44,.14),rgba(234,31,44,.04));
+  border:1px solid rgba(234,31,44,.3);border-radius:10px;padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.unit-price-box span{font-size:12.5px;color:var(--text-dim)}
+.unit-price-box b{font-size:16px;color:var(--red)}
+
+/* Price list page */
+.pl-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.pl-filters select{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;
+  padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;outline:none;
+}
+.pl-count{font-size:12.5px;color:var(--text-dim);white-space:nowrap}
+.pl-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:auto;background:var(--card)}
+.pl-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px}
+.pl-table th{
+  text-align:left;padding:13px 16px;background:rgba(255,255,255,.04);color:var(--text-dim);
+  font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;
+  position:sticky;top:0;
+}
+.pl-table td{padding:12px 16px;border-top:1px solid var(--border);white-space:nowrap}
+.pl-table tbody tr:hover{background:rgba(255,255,255,.03)}
+.pl-table .price-contact{color:var(--text-dim);font-style:italic}
+.pl-table .mini-btn{
+  font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:999px;
+  background:rgba(234,31,44,.14);color:var(--red);border:1px solid rgba(234,31,44,.3);cursor:pointer;
+}
+.pl-pagination{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:22px}
+.pl-pagination button{
+  padding:9px 16px;border-radius:999px;background:var(--card);border:1px solid var(--border);
+  color:#fff;font-size:13px;font-weight:700;cursor:pointer;
+}
+.pl-pagination button:disabled{opacity:.35;cursor:not-allowed}
+.pl-pagination span{font-size:13px;color:var(--text-dim)}
+
+@media(max-width:900px){
+  .fp-layout{grid-template-columns:1fr}
+}
+
 /* ===================== Responsive ===================== */
 @media(max-width:980px){
   .hero-grid{grid-template-columns:1fr}
