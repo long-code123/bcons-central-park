@@ -12,11 +12,35 @@ và tìm kiếm được. Kèm danh mục 60 tiện ích nội khu có thể tì
 ```
 index.html                          trang chính (gồm cả 2 trang con: mặt bằng tầng, bảng giá)
 css/style.css                       giao diện
-js/data.js                          dữ liệu khối, tiện ích, mặt bằng tầng, giá — SỬA Ở ĐÂY
+js/data.js                          dữ liệu khối, tiện ích, mặt bằng tầng — SỬA Ở ĐÂY
+js/orchid-prices.js                 GIÁ THẬT khối Orchid — sinh tự động, không sửa tay (xem bên dưới)
 js/script.js                        logic tương tác (bản đồ, modal, routing, bảng giá...)
 assets/siteplan.jpg                 ảnh mặt bằng tổng thể (đã nén cho web)
 assets/floorplans/orchid-typical.jpg ảnh mặt bằng tầng điển hình khối Orchid
 ```
+
+## Giá thật khối Orchid — `js/orchid-prices.js`
+
+File này **sinh tự động** từ file giá CĐT gửi (`Giá & Mặt bằng Bcons_1.html`),
+không gõ tay để tránh sai số ở các số tiền 10 chữ số. Dữ liệu: 537 căn,
+tầng 3–22, mỗi căn có 3 phương thức thanh toán (PTTT 01 · CK 8,5% / PTTT
+02·03 / PTTT 04·05 · CK 2,45%) × giá chưa VAT/có VAT, phí bảo trì, cờ
+"rổ giá tốt" và trạng thái thật (`open`/`sold`/`lock`).
+
+Khi có **file giá CĐT mới** (cùng định dạng, biến `const D = [...]`),
+chạy lại script sinh file (không cần Claude, chạy thẳng bằng Node):
+
+```
+node tools/gen-orchid-prices.js "đường dẫn file giá mới.html" js/orchid-prices.js
+```
+
+(copy script từ `scratchpad` của phiên làm việc này vào `tools/` nếu muốn
+dùng lại lâu dài — nội dung script chỉ ~40 dòng, đọc biến `const D` trong
+file giá, lọc khối Orchid, ghi lại `js/orchid-prices.js`.)
+
+Trang mặt bằng tầng và trang Bảng giá tự động ưu tiên dùng giá thật này
+cho Orchid; khối nào chưa có file giá tương tự thì vẫn hiển thị "Liên hệ"
+(qua `PRICE_CONFIG` trong `js/data.js`) như cũ.
 
 ## Mặt bằng tầng & Bảng giá — cách hoạt động
 
