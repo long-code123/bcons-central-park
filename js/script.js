@@ -161,6 +161,13 @@ document.addEventListener("DOMContentLoaded", () => {
       showPriceListView();
     } else {
       showHomeView();
+      // Chuyển từ trang con (mặt bằng tầng / bảng giá) về home, #mainView
+      // vừa được hiện lại — trình duyệt không tự cuộn được tới id vì lúc
+      // hash đổi, phần tử đích còn đang display:none. Tự cuộn sau khi hiện.
+      if (h && h.length > 1) {
+        const target = document.querySelector(h);
+        if (target) requestAnimationFrame(() => target.scrollIntoView({ behavior: "smooth", block: "start" }));
+      }
     }
   }
   window.addEventListener("hashchange", handleRoute);
