@@ -1,9 +1,5 @@
 /* ============================================================
    DỮ LIỆU DỰ ÁN — chỉnh sửa trực tiếp ở file này.
-   - points: toạ độ polygon (x,y) theo hệ 2000x1125 (kích thước gốc
-     ảnh mặt bằng assets/siteplan.jpg). Dùng "Chế độ hiệu chỉnh"
-     (nút ở góc dưới bản đồ) để click lấy toạ độ chính xác rồi dán
-     lại vào đây.
    - Các trường "—" là placeholder, cần cập nhật số liệu thật.
 ================================================================ */
 
@@ -12,7 +8,6 @@ const BLOCKS = [
     id: "tamarind",
     name: "TAMARIND",
     color: "#c14a1f",
-    points: "235,200 480,195 483,290 350,293 352,430 232,428",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ phía Bắc dự án, tiếp giáp Hẻm 238 Phan Trung, gần công viên tre vàng và khu vườn cổng chào.",
     floors: "—",
@@ -25,7 +20,6 @@ const BLOCKS = [
     id: "palm",
     name: "PALM",
     color: "#15806b",
-    points: "277,563 423,558 428,1012 282,1015",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ phía Tây, view trọn công viên nội khu và chuỗi hồ bơi — hồ Resort, hồ Massage, hồ trẻ em.",
     floors: "—",
@@ -38,7 +32,6 @@ const BLOCKS = [
     id: "lotus",
     name: "LOTUS",
     color: "#a66a00",
-    points: "452,458 650,452 655,985 457,990",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ trung tâm, kết nối trực tiếp với quảng trường ánh sáng và sân chơi nghệ thuật.",
     floors: "—",
@@ -51,7 +44,6 @@ const BLOCKS = [
     id: "bamboo",
     name: "BAMBOO",
     color: "#5b4b9e",
-    points: "687,410 905,403 908,900 690,905",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ trung tâm, liền kề đường hầm khám phá và cụm sân thể thao ngoài trời.",
     floors: "—",
@@ -64,7 +56,6 @@ const BLOCKS = [
     id: "orchid",
     name: "ORCHID",
     color: "#a83368",
-    points: "945,405 1065,398 1068,985 950,988",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ phía Đông, gần nhà trẻ B.School, trạm sạc xe điện và khu shopping mall.",
     floors: "—",
@@ -153,8 +144,8 @@ const AMENITIES = [
      (0–100) so với chiều rộng/cao ảnh gốc 1754×1240. Với Orchid, các
      toạ độ này được dò bằng phân tích màu pixel (phát hiện tâm 27
      badge đỏ cam trên ảnh gốc), không phải ước lượng bằng mắt — nên
-     khá chính xác. Nếu đổi sang ảnh mặt bằng khác, dùng nút "Chế độ
-     hiệu chỉnh" trong trang mặt bằng tầng để lấy lại toạ độ.
+     khá chính xác. Nếu đổi sang ảnh mặt bằng khác (khối khác), đo lại
+     toạ độ % thủ công theo kích thước ảnh mới rồi điền vào đây.
 ================================================================ */
 
 const FLOOR_PLANS = {

@@ -186,7 +186,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const fpFloorSwitcher = document.getElementById("fpFloorSwitcher");
   const fpImage = document.getElementById("fpImage");
   const fpHotspots = document.getElementById("fpHotspots");
-  const fpCanvas = document.getElementById("fpCanvas");
   const unitPanelEmpty = document.getElementById("unitPanelEmpty");
   const unitPanelContent = document.getElementById("unitPanelContent");
 
@@ -315,26 +314,11 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 
-  /* Floor-plan hotspot calibration (percentage-based, image-size independent) */
-  const fpCalibBtn = document.getElementById("fpCalibBtn");
-  const fpCalibOutput = document.getElementById("fpCalibOutput");
-  let fpCalibOn = false;
-  let fpCalibPoints = [];
-  fpCalibBtn.addEventListener("click", () => {
-    fpCalibOn = !fpCalibOn;
-    fpCalibPoints = [];
-    fpCanvas.classList.toggle("calib-mode", fpCalibOn);
-    fpCalibBtn.textContent = fpCalibOn ? "⏹ Dừng hiệu chỉnh (bấm ảnh để lấy % toạ độ)" : "🎯 Chế độ hiệu chỉnh toạ độ";
-    fpCalibOutput.style.display = fpCalibOn ? "block" : "none";
-    fpCalibOutput.textContent = fpCalibOn ? "Bấm lần lượt vào từng số căn trên ảnh theo đúng thứ tự trong data.js..." : "";
-  });
-  fpCanvas.addEventListener("click", e => {
-    if (!fpCalibOn) return;
-    const rect = fpImage.getBoundingClientRect();
-    const x = (((e.clientX - rect.left) / rect.width) * 100).toFixed(1);
-    const y = (((e.clientY - rect.top) / rect.height) * 100).toFixed(1);
-    fpCalibPoints.push(`x: ${x}, y: ${y}`);
-    fpCalibOutput.textContent = fpCalibPoints.join("\n");
+  /* Toggle: ẩn/hiện bộ điều khiển (ghi chú, chuyển tầng, chú thích) để xem rõ sơ đồ */
+  const fpToggleControls = document.getElementById("fpToggleControls");
+  fpToggleControls.addEventListener("click", () => {
+    const hidden = floorplanView.classList.toggle("controls-hidden");
+    fpToggleControls.textContent = hidden ? "👁 Hiện bộ điều khiển" : "🙈 Ẩn bộ điều khiển";
   });
 
   /* ====================================================================
@@ -399,6 +383,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const PL_PAGE_SIZE = 50;
   let plPage = 1;
   let plFiltersBuilt = false;
+  let plSort = { key: null, dir: 1 };
+
+  const SORT_VALUE = {
+    blockName: r => r.blockName,
+    floor: r => r.floor,
+    code: r => r.code,
+    tt: r => r.tt,
+    ll: r => r.ll,
+    price: r => priceOfRow(r),
+    status: r => r.status ? UNIT_STATUS_LABELS[r.status] : ""
+  };
+
+  function applySort(rows) {
+    if (!plSort.key) return rows;
+    const getVal = SORT_VALUE[plSort.key];
+    return [...rows].sort((a, b) => {
+      const va = getVal(a), vb = getVal(b);
+      // "Liên hệ" / trống luôn xuống cuối, bất kể chiều sắp xếp
+      if (va == null && vb == null) return 0;
+      if (va == null) return 1;
+      if (vb == null) return -1;
+      if (typeof va === "string") return va.localeCompare(vb, "vi") * plSort.dir;
+      return (va - vb) * plSort.dir;
+    });
+  }
 
   function buildPtttVatControls() {
     plPtttSeg.innerHTML = Object.keys(PAYMENT_PLANS).map(k =>
@@ -450,6 +459,16 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     plSearch.addEventListener("input", () => { plPage = 1; renderPriceList(); });
 
+    document.querySelectorAll(".pl-table th[data-sort]").forEach(th => {
+      th.innerHTML = th.textContent + ' <span class="arrow">↕</span>';
+      th.addEventListener("click", () => {
+        const key = th.dataset.sort;
+        plSort = plSort.key === key ? { key, dir: -plSort.dir } : { key, dir: 1 };
+        plPage = 1;
+        renderPriceList();
+      });
+    });
+
     buildPtttVatControls();
   }
 
@@ -481,9 +500,18 @@ document.addEventListener("DOMContentLoaded", () => {
       return true;
     });
 
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PL_PAGE_SIZE));
+    const sorted = applySort(filtered);
+
+    document.querySelectorAll(".pl-table th[data-sort]").forEach(th => {
+      const active = th.dataset.sort === plSort.key;
+      th.classList.toggle("sorted", active);
+      const arrow = th.querySelector(".arrow");
+      if (arrow) arrow.textContent = active ? (plSort.dir === 1 ? "↑" : "↓") : "↕";
+    });
+
+    const totalPages = Math.max(1, Math.ceil(sorted.length / PL_PAGE_SIZE));
     if (plPage > totalPages) plPage = totalPages;
-    const pageRows = filtered.slice((plPage - 1) * PL_PAGE_SIZE, plPage * PL_PAGE_SIZE);
+    const pageRows = sorted.slice((plPage - 1) * PL_PAGE_SIZE, plPage * PL_PAGE_SIZE);
 
     plTableBody.innerHTML = pageRows.map(r => {
       const price = priceOfRow(r);

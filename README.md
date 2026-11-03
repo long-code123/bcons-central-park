@@ -49,12 +49,11 @@ cho Orchid; khối nào chưa có file giá tương tự thì vẫn hiển thị
   từ bản vẽ bạn gửi). Khi có bản vẽ mặt bằng tầng của Tamarind/Palm/
   Lotus/Bamboo, thêm vào `FLOOR_PLANS` theo đúng cấu trúc của `orchid`
   (copy ảnh vào `assets/floorplans/`, liệt kê từng căn với `num/code/tt/ll/x/y`).
-- `FLOOR_PLANS.orchid.floors` đang là placeholder (tầng 2–20, 19 tầng) —
-  **sửa lại đúng số tầng thực tế** của block Orchid.
-- Vị trí số căn trên ảnh (`x`, `y`, tính theo %) là ước lượng bằng mắt.
-  Vào trang mặt bằng tầng, bấm nút **"🎯 Chế độ hiệu chỉnh toạ độ"**, bấm
-  lần lượt từng số căn trên ảnh theo đúng thứ tự khai báo trong
-  `data.js` để lấy toạ độ % chính xác, rồi dán lại vào từng unit.
+- `FLOOR_PLANS.orchid.floors` lấy đúng theo dữ liệu giá thật (tầng 3–22).
+- Vị trí số căn trên ảnh Orchid (`x`, `y`, tính theo %) được dò bằng
+  phân tích màu pixel trên ảnh gốc (không phải ước lượng bằng mắt) nên
+  khá chính xác. Nếu sau này thêm mặt bằng tầng cho khối khác, đo thủ
+  công toạ độ % của từng số căn theo ảnh mới rồi điền vào `units`.
 - Giá: `PRICE_CONFIG` trong `data.js` đang để `null` toàn bộ → site hiển
   thị **"Liên hệ"** thay vì bịa số. Khi có bảng giá/m² chính thức, điền
   vào `PRICE_CONFIG.perBlock` (theo khối) hoặc `PRICE_CONFIG.perUnitCode`
@@ -68,18 +67,13 @@ cho Orchid; khối nào chưa có file giá tương tự thì vẫn hiển thị
 
 1. Mở `js/data.js`, điền số liệu thật cho từng khối (số tầng, tổng số
    căn, loại hình căn hộ, thời gian bàn giao) — hiện đang để `"—"`.
+   (Riêng Orchid đã có giá/số liệu thật, xem mục bên dưới.)
 2. Điền hotline/email thật trong `index.html` ở mục Liên hệ (`#lien-he`).
-3. Toạ độ polygon của 5 khối (trong `js/data.js`, trường `points`) là
-   ước lượng bằng mắt. Để chỉnh chính xác theo từng góc khối:
-   - Mở site, bấm nút **"🎯 Chế độ hiệu chỉnh toạ độ"** ở góc dưới bản đồ.
-   - Bấm lần lượt vào các góc của khối trên ảnh — toạ độ hiện ra ở ô
-     bên dưới (hệ 2000×1125, đúng kích thước ảnh gốc).
-   - Copy chuỗi đó dán vào `points` của khối tương ứng trong `data.js`.
-4. (Tuỳ chọn) Thay `assets/siteplan.jpg` bằng ảnh phối cảnh/flycam thật
+3. (Tuỳ chọn) Thay `assets/siteplan.jpg` bằng ảnh phối cảnh/flycam thật
    nếu có, giữ nguyên tên file hoặc cập nhật lại đường dẫn trong
    `index.html`.
-5. Xem mục "Mặt bằng tầng & Bảng giá" bên dưới để cập nhật số tầng thật,
-   hiệu chỉnh toạ độ từng căn, và điền giá khi có bảng giá chính thức.
+4. Xem mục "Mặt bằng tầng & Bảng giá" bên dưới khi cần thêm mặt bằng
+   tầng cho khối khác hoặc điền giá chính thức.
 
 ## Chạy thử ở máy local
 

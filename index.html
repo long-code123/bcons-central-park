@@ -177,24 +177,27 @@
         <span id="fpBlockName"></span>
         <small id="fpBlockSub"></small>
       </div>
-      <a href="#/price-list" class="btn btn-primary btn-sm">Xem bảng giá đầy đủ</a>
+      <div class="page-topbar-actions">
+        <button class="btn btn-ghost btn-sm" id="fpToggleControls">🙈 Ẩn bộ điều khiển</button>
+        <a href="#/price-list" class="btn btn-primary btn-sm">Xem bảng giá đầy đủ</a>
+      </div>
     </div>
   </div>
 
   <div class="wrap" style="padding-top:26px;padding-bottom:70px">
-    <div class="note" id="fpNote" style="margin-bottom:20px"></div>
+    <div id="fpControls">
+      <div class="note" id="fpNote" style="margin-bottom:20px"></div>
 
-    <div class="fp-floor-switcher-wrap">
-      <div class="fp-floor-switcher" id="fpFloorSwitcher"></div>
+      <div class="fp-floor-switcher-wrap">
+        <div class="fp-floor-switcher" id="fpFloorSwitcher"></div>
+      </div>
+      <div class="status-legend" id="fpStatusLegend"></div>
     </div>
-    <div class="status-legend" id="fpStatusLegend"></div>
 
     <div class="fp-layout">
       <div class="map-canvas" id="fpCanvas">
         <img id="fpImage" src="" alt="Mặt bằng tầng" draggable="false" />
         <div id="fpHotspots"></div>
-        <button class="btn btn-ghost map-calib-btn" id="fpCalibBtn">🎯 Chế độ hiệu chỉnh toạ độ</button>
-        <div id="fpCalibOutput" class="calib-output"></div>
       </div>
 
       <div class="unit-panel" id="unitPanel">
@@ -252,8 +255,15 @@
       <table class="pl-table">
         <thead>
           <tr>
-            <th>Khối</th><th>Tầng</th><th>Căn</th><th>Kiểu</th>
-            <th>TT (m²)</th><th>LL (m²)</th><th>Giá</th><th>Trạng thái</th><th></th>
+            <th data-sort="blockName">Khối</th>
+            <th data-sort="floor">Tầng</th>
+            <th>Căn</th>
+            <th data-sort="code">Kiểu</th>
+            <th data-sort="tt">TT (m²)</th>
+            <th data-sort="ll">LL (m²)</th>
+            <th data-sort="price">Giá</th>
+            <th data-sort="status">Trạng thái</th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="plTableBody"></tbody>
