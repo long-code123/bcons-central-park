@@ -11,7 +11,7 @@ const BLOCKS = [
   {
     id: "tamarind",
     name: "TAMARIND",
-    color: "#e9212a",
+    color: "#c14a1f",
     points: "235,200 480,195 483,290 350,293 352,430 232,428",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ phía Bắc dự án, tiếp giáp Hẻm 238 Phan Trung, gần công viên tre vàng và khu vườn cổng chào.",
@@ -24,7 +24,7 @@ const BLOCKS = [
   {
     id: "palm",
     name: "PALM",
-    color: "#2fb6a8",
+    color: "#15806b",
     points: "277,563 423,558 428,1012 282,1015",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ phía Tây, view trọn công viên nội khu và chuỗi hồ bơi — hồ Resort, hồ Massage, hồ trẻ em.",
@@ -37,7 +37,7 @@ const BLOCKS = [
   {
     id: "lotus",
     name: "LOTUS",
-    color: "#f2a93b",
+    color: "#a66a00",
     points: "452,458 650,452 655,985 457,990",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ trung tâm, kết nối trực tiếp với quảng trường ánh sáng và sân chơi nghệ thuật.",
@@ -50,7 +50,7 @@ const BLOCKS = [
   {
     id: "bamboo",
     name: "BAMBOO",
-    color: "#7b6cf6",
+    color: "#5b4b9e",
     points: "687,410 905,403 908,900 690,905",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ trung tâm, liền kề đường hầm khám phá và cụm sân thể thao ngoài trời.",
@@ -63,7 +63,7 @@ const BLOCKS = [
   {
     id: "orchid",
     name: "ORCHID",
-    color: "#ec5aa8",
+    color: "#a83368",
     points: "945,405 1065,398 1068,985 950,988",
     tag: "Khối căn hộ",
     desc: "Khối căn hộ phía Đông, gần nhà trẻ B.School, trạm sạc xe điện và khu shopping mall.",

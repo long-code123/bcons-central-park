@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Bcons Central Park | Mặt bằng tương tác</title>
 <meta name="description" content="Website demo tương tác dự án Bcons Central Park — khám phá mặt bằng tổng thể, các khối căn hộ Tamarind, Palm, Lotus, Bamboo, Orchid và 60 tiện ích nội khu." />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23ea1f2c%22/><text x=%2250%22 y=%2266%22 font-size=%2258%22 font-family=%22Arial%22 font-weight=%22900%22 fill=%22white%22 text-anchor=%22middle%22>B</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23f2a900%22/><text x=%2250%22 y=%2266%22 font-size=%2258%22 font-family=%22Arial%22 font-weight=%22900%22 fill=%22%23201400%22 text-anchor=%22middle%22>B</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -69,39 +69,16 @@
   <div class="wrap">
     <div class="section-head">
       <div class="eyebrow">Mặt bằng tổng thể</div>
-      <h2 class="section-title">Bấm vào từng khối để xem chi tiết</h2>
-      <p class="section-sub">Di chuột để xem tên khối, bấm để mở thông tin chi tiết — số tầng, loại căn hộ và các tiện ích lân cận.</p>
+      <h2 class="section-title">Bấm vào tên khối để xem chi tiết</h2>
+      <p class="section-sub">60 tiện ích nội khu đã có đầy đủ trên ảnh mặt bằng. Bấm vào tên khối bên dưới hoặc thẻ khối phía dưới trang để xem số tầng, loại căn hộ và tiện ích lân cận.</p>
     </div>
 
     <div class="map-toolbar">
       <div class="map-legend-tags" id="legendTags"></div>
     </div>
 
-    <div class="map-layout">
-      <div class="map-canvas" id="mapCanvas">
-        <div class="map-hint">👆 Di chuột / bấm vào khối trên bản đồ</div>
-        <img src="assets/siteplan.jpg" alt="Mặt bằng tổng thể Bcons Central Park" draggable="false" />
-        <svg id="mapSvg" viewBox="0 0 2000 1125" preserveAspectRatio="none"></svg>
-        <div id="mapLabels"></div>
-        <button class="btn btn-ghost map-calib-btn" id="calibBtn">🎯 Chế độ hiệu chỉnh toạ độ</button>
-        <div id="calibOutput"></div>
-      </div>
-
-      <div class="amenity-panel">
-        <h3>Danh mục tiện ích</h3>
-        <div class="count" id="amenityCount"></div>
-        <div class="amenity-search">
-          🔍 <input type="text" id="amenitySearch" placeholder="Tìm tiện ích... (vd: hồ bơi, cây xanh)" />
-        </div>
-        <div class="amenity-filters">
-          <div class="chip active" data-cat="all">Tất cả</div>
-          <div class="chip" data-cat="canh-quan">🌿 Cảnh quan</div>
-          <div class="chip" data-cat="giai-tri">☕ Giải trí</div>
-          <div class="chip" data-cat="the-thao">🏊 Thể thao</div>
-          <div class="chip" data-cat="tien-ich">⚡ Kỹ thuật</div>
-        </div>
-        <div class="amenity-list" id="amenityList"></div>
-      </div>
+    <div class="map-canvas map-canvas-static">
+      <img src="assets/siteplan.jpg" alt="Mặt bằng tổng thể Bcons Central Park" draggable="false" />
     </div>
   </div>
 </section>
@@ -215,7 +192,7 @@
         <img id="fpImage" src="" alt="Mặt bằng tầng" draggable="false" />
         <div id="fpHotspots"></div>
         <button class="btn btn-ghost map-calib-btn" id="fpCalibBtn">🎯 Chế độ hiệu chỉnh toạ độ</button>
-        <div id="fpCalibOutput"></div>
+        <div id="fpCalibOutput" class="calib-output"></div>
       </div>
 
       <div class="unit-panel" id="unitPanel">
