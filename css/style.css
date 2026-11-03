@@ -267,10 +267,22 @@ body.on-subpage #mainView{display:none}
 }
 .unit-dot:hover{background:var(--gold);border-color:#fff;transform:translate(-50%,-50%) scale(1.15);color:#201400}
 .unit-dot.active{background:var(--gold);border-color:#201400;box-shadow:0 0 0 5px rgba(242,169,0,.35);color:#201400}
+.unit-dot.status-open{background:#1b7048}
+.unit-dot.status-sold{background:#9a9a9a}
+.unit-dot.status-lock{background:repeating-linear-gradient(135deg,#a2650a 0 4px,#c98a2e 4px 8px)}
+.unit-dot.status-open:hover,.unit-dot.status-open.active{background:var(--gold);color:#201400}
+.unit-dot.status-sold:hover,.unit-dot.status-sold.active{background:var(--gold);color:#201400}
+.unit-dot.status-lock:hover,.unit-dot.status-lock.active{background:var(--gold);color:#201400}
+.unit-dot .star{
+  position:absolute;top:-6px;right:-6px;width:14px;height:14px;border-radius:50%;
+  background:var(--gold);color:#201400;font-size:9px;font-style:normal;
+  display:flex;align-items:center;justify-content:center;border:1.5px solid #fff;
+}
 #fpCanvas.calib-mode .unit-dot{pointer-events:none}
 
 .unit-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;min-height:360px;box-shadow:0 2px 14px -10px rgba(30,22,0,.14)}
 .unit-panel-empty{color:var(--text-dim);font-size:13.5px;line-height:1.7;padding-top:30px;text-align:center}
+.unit-status-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .unit-code{font-size:24px;font-weight:800;margin-bottom:4px;color:var(--ink)}
 .unit-sub{font-size:13px;color:var(--text-dim);margin-bottom:20px}
 .unit-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
@@ -280,12 +292,48 @@ body.on-subpage #mainView{display:none}
 .unit-price-box{
   background:linear-gradient(135deg,var(--gold-50),#fff);
   border:1px solid rgba(242,169,0,.4);border-radius:10px;padding:14px 16px;
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
 .unit-price-box span{font-size:12.5px;color:var(--text-dim)}
 .unit-price-box b{font-size:16px;color:var(--gold-dark)}
+.unit-price-box.muted{background:#fafafa;border-color:var(--border)}
+.unit-price-box.muted b{color:var(--text-dim);font-size:13px}
+
+/* Status badges (open / sold / lock) */
+.status-badge{
+  display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;padding:5px 11px;
+  border-radius:999px;white-space:nowrap;
+}
+.status-badge:empty{display:none}
+.status-badge.status-open{background:#e4f5ea;color:#1b7048}
+.status-badge.status-sold{background:#eee;color:#6b6b6b}
+.status-badge.status-lock{background:#fdecd8;color:#a2650a}
+.status-badge.sm{font-size:10.5px;padding:4px 9px}
+
+/* Price table (3 phương thức × chưa/có VAT) */
+.price-table{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.price-row{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px;padding:9px 12px;font-size:12.5px}
+.price-row:not(:last-child){border-bottom:1px solid var(--border)}
+.price-row.head{background:var(--bg-alt);color:var(--text-dim);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.price-row span:first-child{color:var(--ink);font-weight:600}
+.price-row span:not(:first-child){font-variant-numeric:tabular-nums;color:var(--ink);font-weight:700;text-align:right}
+.price-row.head span{font-weight:700;color:var(--text-dim)}
+.unit-fee-note{font-size:11.5px;color:var(--text-dim);line-height:1.6}
+
+/* Status legend on the floor-plan page */
+.status-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px;font-size:12px;color:var(--text-dim)}
+.status-legend .lg-item{display:flex;align-items:center;gap:6px}
+.status-legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.status-legend i.dot-open{background:#fff;border:2px solid #1b7048}
+.status-legend i.dot-sold{background:#d8d8d8;border:2px solid #9a9a9a}
+.status-legend i.dot-lock{background:repeating-linear-gradient(135deg,#fdecd8 0 4px,#f6d9ad 4px 8px);border:2px dashed #a2650a}
+.status-legend i.dot-good{background:none;border:none;color:var(--gold-dark);font-size:13px;width:auto;height:auto}
 
 /* Price list page */
+.pl-pttt-row{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg-btn{background:#fff;color:var(--text-dim);border-color:var(--border)}
+.seg-btn[aria-pressed="true"]{background:linear-gradient(135deg,var(--gold-200),var(--gold));border-color:var(--gold);color:#201400}
 .pl-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
 .pl-filters select{
   background:#fff;border:1px solid var(--border);border-radius:10px;

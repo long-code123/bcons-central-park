@@ -143,8 +143,12 @@ const AMENITIES = [
    - Chỉ "orchid" có dữ liệu thật (từ bản vẽ mặt bằng tầng điển hình
      bạn cung cấp). Các khối khác sẽ hiện "đang cập nhật" cho đến khi
      bạn thêm dữ liệu theo đúng cấu trúc bên dưới.
-   - floors: danh sách tầng áp dụng mặt bằng này — ĐANG LÀ PLACEHOLDER
-     (tầng 2–20), sửa lại đúng số tầng thực tế của block Orchid.
+   - floors (Orchid): tầng 3–22, lấy đúng theo dữ liệu giá thật trong
+     js/orchid-prices.js (không còn là placeholder).
+   - units[].tt / ll: diện tích mặc định cho khối CHƯA có giá thật
+     (dùng khi không tra được dữ liệu theo tầng). Với Orchid, script.js
+     ưu tiên lấy TT/LL theo đúng tầng từ orchid-prices.js vì diện tích
+     thông thuỷ (LL) có thể chênh lệch nhẹ giữa các cụm tầng.
    - units[].x / y: vị trí tâm số thứ tự căn trên ảnh, tính theo %
      (0–100) so với chiều rộng/cao ảnh. Dùng nút "Chế độ hiệu chỉnh"
      trong trang mặt bằng tầng để bấm lấy toạ độ chính xác rồi dán lại.
@@ -154,7 +158,7 @@ const FLOOR_PLANS = {
   orchid: {
     title: "Mặt bằng tầng điển hình",
     image: "assets/floorplans/orchid-typical.jpg",
-    floors: Array.from({ length: 19 }, (_, i) => i + 2), // TODO: sửa đúng số tầng thực tế (hiện: tầng 2–20)
+    floors: Array.from({ length: 20 }, (_, i) => i + 3), // tầng 3–22, lấy từ dữ liệu giá thật (js/orchid-prices.js)
     units: [
       { num: 22, code: "B5", tt: 69.81, ll: 62.98, x: 10.1, y: 21.3 },
       { num: 23, code: "D3", tt: 37.60, ll: 33.85, x: 16.4, y: 21.3 },
@@ -203,6 +207,11 @@ function getUnitPricePerM2(blockId, code) {
 function formatVND(n) {
   return n.toLocaleString("vi-VN") + " đ";
 }
+function formatBillion(n) {
+  return (n / 1e9).toLocaleString("vi-VN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " tỷ";
+}
+
+const UNIT_STATUS_LABELS = { open: "Còn bán", sold: "Đã bán", lock: "CĐT giữ lại" };
 
 const CATEGORIES = {
   "canh-quan": { label: "Cảnh quan & Nghệ thuật", icon: "🌿" },

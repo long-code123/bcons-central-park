@@ -195,7 +195,9 @@ document.addEventListener("DOMContentLoaded", () => {
     fpState = { blockId, floor, selectedUnit: null };
 
     fpBlockSub.textContent = fp.title + " — Tầng " + floor;
-    fpNote.innerHTML = "⚠️ Danh sách tầng và vị trí số căn trên ảnh là dữ liệu demo (ước lượng) — dùng nút hiệu chỉnh bên dưới để chỉnh lại chính xác trước khi dùng thật.";
+    fpNote.innerHTML = hasLivePricing(blockId)
+      ? "Giá tham khảo theo bảng giá CĐT (file Rổ hàng/Check giá), chưa phải cam kết cuối cùng — số tiền cuối cùng theo hợp đồng và thông báo chính thức của CĐT. Vị trí số căn trên ảnh là ước lượng, dùng nút hiệu chỉnh bên dưới nếu cần chỉnh lại."
+      : "⚠️ Danh sách tầng và vị trí số căn trên ảnh là dữ liệu demo (ước lượng) — dùng nút hiệu chỉnh bên dưới để chỉnh lại chính xác trước khi dùng thật.";
 
     fpImage.src = fp.image;
     fpImage.alt = fp.title;
@@ -209,16 +211,33 @@ document.addEventListener("DOMContentLoaded", () => {
       fpFloorSwitcher.appendChild(pill);
     });
 
+    const fpStatusLegend = document.getElementById("fpStatusLegend");
+    fpStatusLegend.innerHTML = hasLivePricing(blockId)
+      ? `<span class="lg-item"><i class="dot-open"></i>Còn bán</span>
+         <span class="lg-item"><i class="dot-sold"></i>Đã bán</span>
+         <span class="lg-item"><i class="dot-lock"></i>CĐT giữ lại</span>
+         <span class="lg-item"><i class="dot-good">★</i>Rổ giá tốt</span>`
+      : "";
+
     fpHotspots.innerHTML = "";
     fp.units.forEach(u => {
       const dot = document.createElement("div");
-      dot.className = "unit-dot";
+      const live = liveUnitData(blockId, floor, u.num);
+      dot.className = "unit-dot" + (live ? " status-" + live.status : "") + (live && live.goodBasket ? " good" : "");
       dot.style.left = u.x + "%";
       dot.style.top = u.y + "%";
-      dot.textContent = String(u.num).padStart(2, "0");
+      dot.innerHTML = String(u.num).padStart(2, "0") + (live && live.goodBasket ? '<i class="star">★</i>' : "");
       dot.addEventListener("click", () => selectUnit(u, dot));
       fpHotspots.appendChild(dot);
     });
+  }
+
+  /* ---------- Real per-unit pricing bridge (currently: Orchid only) ---------- */
+  function hasLivePricing(blockId) {
+    return blockId === "orchid" && typeof findOrchidUnitPrice === "function";
+  }
+  function liveUnitData(blockId, floor, unitNo) {
+    return hasLivePricing(blockId) ? findOrchidUnitPrice(floor, unitNo) : null;
   }
 
   function selectUnit(u, dotEl) {
@@ -229,15 +248,45 @@ document.addEventListener("DOMContentLoaded", () => {
     unitPanelEmpty.style.display = "none";
     unitPanelContent.style.display = "block";
     const block = BLOCKS.find(b => b.id === fpState.blockId);
-    document.getElementById("uCode").textContent = "Căn " + u.code + " · #" + String(u.num).padStart(2, "0");
-    document.getElementById("uFloorLabel").textContent = "Tầng " + fpState.floor + (block ? " — Khối " + block.name : "");
-    document.getElementById("uTT").textContent = u.tt.toFixed(2) + " m²";
-    document.getElementById("uLL").textContent = u.ll.toFixed(2) + " m²";
+    const live = liveUnitData(fpState.blockId, fpState.floor, u.num);
 
-    const pricePerM2 = getUnitPricePerM2(fpState.blockId, u.code);
-    document.getElementById("uPrice").textContent = pricePerM2
-      ? formatVND(Math.round(pricePerM2 * u.tt))
-      : "Liên hệ nhận báo giá";
+    document.getElementById("uCode").textContent = "Căn " + u.code + " · #" + String(u.num).padStart(2, "0");
+    document.getElementById("uFloorLabel").textContent = "Tầng " + fpState.floor + (block ? " — Khối " + block.name : "") + (live ? " · " + live.type : "");
+    document.getElementById("uTT").textContent = (live ? live.tt : u.tt).toFixed(2) + " m²";
+    document.getElementById("uLL").textContent = (live ? live.ll : u.ll).toFixed(2) + " m²";
+
+    renderUnitPriceArea(live, fpState.blockId, u.code, u.tt);
+  }
+
+  function renderUnitPriceArea(live, blockId, code, ttFallback) {
+    const badge = document.getElementById("uStatusBadge");
+    const area = document.getElementById("uPriceArea");
+
+    if (!live) {
+      badge.textContent = "";
+      badge.className = "status-badge";
+      const pricePerM2 = getUnitPricePerM2(blockId, code);
+      area.innerHTML = `<div class="unit-price-box"><span>Giá dự kiến</span><b>${pricePerM2 ? formatVND(Math.round(pricePerM2 * ttFallback)) : "Liên hệ nhận báo giá"}</b></div>`;
+      return;
+    }
+
+    badge.textContent = UNIT_STATUS_LABELS[live.status] + (live.goodBasket ? " · ★ Rổ giá tốt" : "");
+    badge.className = "status-badge status-" + live.status;
+
+    if (live.status !== "open") {
+      area.innerHTML = `<div class="unit-price-box muted"><span>${live.status === "sold" ? "Căn đã giao dịch, không hiển thị giá" : "Căn chưa mở bán, chưa công bố giá"}</span><b>Liên hệ tư vấn các căn còn lại</b></div>`;
+      return;
+    }
+
+    area.innerHTML = `
+      <div class="price-table">
+        <div class="price-row head"><span>Phương thức</span><span>Chưa VAT</span><span>Có VAT</span></div>
+        <div class="price-row"><span>${PAYMENT_PLANS["01"]}</span><span>${formatBillion(live.p01.noVat)}</span><span>${formatBillion(live.p01.vat)}</span></div>
+        <div class="price-row"><span>${PAYMENT_PLANS["23"]}</span><span>${formatBillion(live.p23.noVat)}</span><span>${formatBillion(live.p23.vat)}</span></div>
+        <div class="price-row"><span>${PAYMENT_PLANS["45"]}</span><span>${formatBillion(live.p45.noVat)}</span><span>${formatBillion(live.p45.vat)}</span></div>
+      </div>
+      <div class="unit-fee-note">Phí bảo trì (2%): ${formatVND(live.maintenanceFee)}. Giá tham khảo theo bảng giá CĐT, chưa phải cam kết cuối cùng.</div>
+    `;
   }
   function hideUnitPanel() {
     unitPanelEmpty.style.display = "block";
@@ -276,43 +325,90 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ====================================================================
      PRICE LIST PAGE
+     Dùng thẳng dữ liệu giá thật (ORCHID_UNIT_PRICES) cho khối đã có,
+     cộng với các khối còn lại (nếu có FLOOR_PLANS nhưng chưa có giá
+     thật) dùng PRICE_CONFIG làm phương án dự phòng.
   ==================================================================== */
-  let allPriceRows = null;
+  const plState = { pttt: "23", vat: false };
+
   function buildPriceRows() {
-    if (allPriceRows) return allPriceRows;
     const rows = [];
     Object.keys(FLOOR_PLANS).forEach(blockId => {
       const fp = FLOOR_PLANS[blockId];
       const block = BLOCKS.find(b => b.id === blockId);
+      const codeByNum = {};
+      fp.units.forEach(u => { codeByNum[u.num] = u.code; });
+
       fp.floors.forEach(floor => {
         fp.units.forEach(u => {
+          const live = liveUnitData(blockId, floor, u.num);
           rows.push({
             blockId,
             blockName: block ? block.name : blockId,
             floor,
             num: u.num,
             code: u.code,
-            tt: u.tt,
-            ll: u.ll,
-            pricePerM2: getUnitPricePerM2(blockId, u.code)
+            type: live ? live.type : null,
+            tt: live ? live.tt : u.tt,
+            ll: live ? live.ll : u.ll,
+            status: live ? live.status : null,
+            goodBasket: live ? live.goodBasket : false,
+            live,
+            pricePerM2: live ? null : getUnitPricePerM2(blockId, u.code)
           });
         });
       });
     });
-    allPriceRows = rows;
     return rows;
+  }
+
+  function priceOfRow(r) {
+    if (!r.live) {
+      return r.pricePerM2 ? Math.round(r.pricePerM2 * r.tt) : null;
+    }
+    if (r.live.status !== "open") return null;
+    const plan = r.live[plState.pttt === "01" ? "p01" : plState.pttt === "45" ? "p45" : "p23"];
+    return plState.vat ? plan.vat : plan.noVat;
   }
 
   const plBlockFilter = document.getElementById("plBlockFilter");
   const plFloorFilter = document.getElementById("plFloorFilter");
   const plTypeFilter = document.getElementById("plTypeFilter");
+  const plStatusFilter = document.getElementById("plStatusFilter");
   const plSearch = document.getElementById("plSearch");
   const plTableBody = document.getElementById("plTableBody");
   const plCount = document.getElementById("plCount");
   const plPagination = document.getElementById("plPagination");
+  const plNote = document.getElementById("plNote");
+  const plPtttSeg = document.getElementById("plPtttSeg");
+  const plVatSeg = document.getElementById("plVatSeg");
   const PL_PAGE_SIZE = 50;
   let plPage = 1;
   let plFiltersBuilt = false;
+
+  function buildPtttVatControls() {
+    plPtttSeg.innerHTML = Object.keys(PAYMENT_PLANS).map(k =>
+      `<button type="button" class="btn btn-sm seg-btn" data-pttt="${k}" aria-pressed="${plState.pttt === k}">${PAYMENT_PLANS[k]}</button>`
+    ).join("");
+    plVatSeg.innerHTML = `
+      <button type="button" class="btn btn-sm seg-btn" data-vat="0" aria-pressed="${!plState.vat}">Chưa VAT</button>
+      <button type="button" class="btn btn-sm seg-btn" data-vat="1" aria-pressed="${plState.vat}">Có VAT</button>`;
+
+    plPtttSeg.querySelectorAll("[data-pttt]").forEach(btn =>
+      btn.addEventListener("click", () => {
+        plState.pttt = btn.dataset.pttt;
+        plPtttSeg.querySelectorAll("[data-pttt]").forEach(b => b.setAttribute("aria-pressed", b === btn));
+        renderPriceList();
+      })
+    );
+    plVatSeg.querySelectorAll("[data-vat]").forEach(btn =>
+      btn.addEventListener("click", () => {
+        plState.vat = btn.dataset.vat === "1";
+        plVatSeg.querySelectorAll("[data-vat]").forEach(b => b.setAttribute("aria-pressed", b.dataset.vat === (plState.vat ? "1" : "0")));
+        renderPriceList();
+      })
+    );
+  }
 
   function buildPriceFilters(rows) {
     if (plFiltersBuilt) return;
@@ -332,15 +428,22 @@ document.addEventListener("DOMContentLoaded", () => {
     plTypeFilter.innerHTML = '<option value="all">Tất cả loại căn</option>' +
       types.map(t => `<option value="${t}">${t}</option>`).join("");
 
-    [plBlockFilter, plFloorFilter, plTypeFilter].forEach(sel =>
+    plStatusFilter.innerHTML = '<option value="all">Mọi trạng thái</option>' +
+      Object.keys(UNIT_STATUS_LABELS).map(s => `<option value="${s}">${UNIT_STATUS_LABELS[s]}</option>`).join("");
+
+    [plBlockFilter, plFloorFilter, plTypeFilter, plStatusFilter].forEach(sel =>
       sel.addEventListener("change", () => { plPage = 1; renderPriceList(); })
     );
     plSearch.addEventListener("input", () => { plPage = 1; renderPriceList(); });
+
+    buildPtttVatControls();
   }
 
   function renderPriceList() {
     const rows = buildPriceRows();
     buildPriceFilters(rows);
+
+    plNote.innerHTML = 'Giá tham khảo theo bảng giá CĐT ("FILE CHECK GIÁ BCONS CENTRAL PARK" · "RỔ HÀNG GIÁ TỐT"), PTTT 04·05 = PTTT 02·03 trừ chiết khấu 2,45%; chưa gồm phí bảo trì 2%. Không phải cam kết cuối cùng — số tiền theo hợp đồng và thông báo chính thức của CĐT. Khối chưa có bảng giá CĐT hiển thị "Liên hệ".';
 
     if (!rows.length) {
       plTableBody.innerHTML = `<tr><td colspan="9" style="color:var(--text-dim);text-align:center;padding:40px">Chưa có dữ liệu mặt bằng tầng nào. Thêm dữ liệu vào FLOOR_PLANS trong js/data.js.</td></tr>`;
@@ -352,13 +455,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const blockVal = plBlockFilter.value || "all";
     const floorVal = plFloorFilter.value || "all";
     const typeVal = plTypeFilter.value || "all";
+    const statusVal = plStatusFilter.value || "all";
     const q = plSearch.value.trim().toLowerCase();
 
     const filtered = rows.filter(r => {
       if (blockVal !== "all" && r.blockId !== blockVal) return false;
       if (floorVal !== "all" && String(r.floor) !== floorVal) return false;
       if (typeVal !== "all" && r.code !== typeVal) return false;
-      if (q && !(`${r.code} ${r.blockName} ${r.num}`.toLowerCase().includes(q))) return false;
+      if (statusVal !== "all" && r.status !== statusVal) return false;
+      if (q && !(`${r.code} ${r.blockName} ${r.num} ${r.type || ""}`.toLowerCase().includes(q))) return false;
       return true;
     });
 
@@ -367,21 +472,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const pageRows = filtered.slice((plPage - 1) * PL_PAGE_SIZE, plPage * PL_PAGE_SIZE);
 
     plTableBody.innerHTML = pageRows.map(r => {
-      const priceM2 = r.pricePerM2
-        ? `${formatVND(r.pricePerM2)}/m²`
-        : `<span class="price-contact">Liên hệ</span>`;
-      const total = r.pricePerM2
-        ? formatVND(Math.round(r.pricePerM2 * r.tt))
-        : `<span class="price-contact">Liên hệ</span>`;
+      const price = priceOfRow(r);
+      const priceCell = price ? formatBillion(price) : `<span class="price-contact">Liên hệ</span>`;
+      const statusCell = r.status
+        ? `<span class="status-badge status-${r.status} sm">${UNIT_STATUS_LABELS[r.status]}${r.goodBasket ? " ★" : ""}</span>`
+        : `<span class="price-contact">—</span>`;
       return `<tr>
         <td>${r.blockName}</td>
         <td>Tầng ${r.floor}</td>
         <td>#${String(r.num).padStart(2, "0")}</td>
-        <td>${r.code}</td>
+        <td>${r.type || r.code}</td>
         <td>${r.tt.toFixed(2)}</td>
         <td>${r.ll.toFixed(2)}</td>
-        <td>${priceM2}</td>
-        <td>${total}</td>
+        <td>${priceCell}</td>
+        <td>${statusCell}</td>
         <td><button class="mini-btn" data-block="${r.blockId}" data-floor="${r.floor}" data-code="${r.code}" data-num="${r.num}">Tư vấn</button></td>
       </tr>`;
     }).join("");
